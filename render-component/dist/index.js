@@ -5,7 +5,6 @@ function Item(props) {
     onClick: props.onClick
   }, props.children);
 }
-
 class List extends Component {
   constructor(props) {
     super();
@@ -23,7 +22,6 @@ class List extends Component {
       textColor: props.textColor
     };
   }
-
   render() {
     return createElement("ul", {
       className: "list"
@@ -37,9 +35,7 @@ class List extends Component {
       }, item.text);
     }));
   }
-
 }
-
 render(createElement(List, {
   textColor: 'pink'
 }), document.getElementById('root'));
