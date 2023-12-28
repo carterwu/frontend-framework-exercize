@@ -2,7 +2,7 @@
   "name": "render-vdom",
   "version": "1.0.0",
   "description": "",
-  "main": "dong.js",
+  "main": "render.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
