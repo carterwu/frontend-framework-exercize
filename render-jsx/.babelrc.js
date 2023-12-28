@@ -3,7 +3,7 @@ module.exports = {
         [
             '@babel/preset-react',
             {
-                pragma: 'createElement'
+                pragma: 'createElement' // default pragma is React.createElement (only in classic runtime)
             }
         ]
     ]
