@@ -44,7 +44,7 @@ class List extends Component {
         return <div>
             <ul className="list">
                 {this.state.list.map((item, index) => {
-                    return <Item style={{ background: item.color, color: this.state.textColor}} onRemoveItem={() => this.handleItemRemove(index)}>{item.text}</Item>
+                    return <Item style={{ background: item.color }} onRemoveItem={() => this.handleItemRemove(index)}>{item.text}</Item>
                 })}
             </ul>
             <div>
@@ -55,4 +55,4 @@ class List extends Component {
     }
 }
 
-render(<List textColor={'#000'}/>, document.getElementById('root'));
+render(<List/>, document.getElementById('root'));

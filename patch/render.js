@@ -31,6 +31,7 @@ const render = (vdom, parent = null) => {
     }
 };
 
+/**** 纯函数function组件和 class组件 的vdom 生成 */
 function renderComponent(vdom, parent) {
     const props = Object.assign({}, vdom.props, {
         children: vdom.children
@@ -51,10 +52,13 @@ function renderComponent(vdom, parent) {
         return instance.dom;
     } else {
         const componentVdom = vdom.type(props);
-        return render(componentVdom, parent);
+        const dom = render(componentVdom, parent);
+        dom.__key = vdom.props.key
+        return dom
     }
 }
 
+/******** 更新逻辑 */
 function patch(dom, vdom, parent = dom.parentNode) {
     const replace = parent ? el => {
         parent.replaceChild(el, dom);
@@ -75,14 +79,14 @@ function patch(dom, vdom, parent = dom.parentNode) {
             } else {
                 return componentDom
             }
-        } else if (!Component.isPrototypeOf(vdom.type)) {
+        } else if (!Component.isPrototypeOf(vdom.type)) {// todo 纯函数直接patch？？
             return patch(dom, vdom.type(props), parent);
         }
     }else if (dom instanceof Text) {
         if (typeof vdom === 'object') {
             return replace(render(vdom, parent));
         } else {
-            return dom.textContent != vdom ? replace(render(vdom, parent)) : dom;
+            return dom.textContent != vdom ? replace(render(vdom, parent)) : dom; // todo 为什么不是直接设置textContent?
         }
     } else if (dom.nodeName !== vdom.type.toUpperCase() && typeof vdom === 'object') {
         return replace(render(vdom, parent));
@@ -97,9 +101,9 @@ function patch(dom, vdom, parent = dom.parentNode) {
         [].concat(...vdom.children).map((child, index) => {
             const key = child.props && child.props.key || `__index_${index}`;
             dom.appendChild(oldDoms[key] ? patch(oldDoms[key], child) : render(child, dom));
-            delete oldDoms[key];
+            delete oldDoms[key]; // 新dom替换旧dom
         });
-        for (const key in oldDoms) {
+        for (const key in oldDoms) { // 剩下不再需要渲染的dom，直接删除
             const instance = oldDoms[key].__instance;
             if (instance) instance.componentWillUnmount();
             oldDoms[key].remove();
@@ -125,25 +129,26 @@ function isPlainAttr(key, value) {
     return typeof value != 'object' && typeof value != 'function';
 }
 
+// <input ref={(ele) => {this.ref = ele}}/>
 function isRefAttr(key, value) {
     return key === 'ref' && typeof value === 'function';
 }
 
 const setAttribute = (dom, key, value) => {
     if (isEventListenerAttr(key, value)) {
-        const eventType = key.slice(2).toLowerCase();
+        const eventType = key.slice(2).toLowerCase(); // 一个eventType属性只能有一个对应的事件，但是可以通过element.addEventListner添加（框架控制范围之外）
         dom.__handlers = dom.__handlers || {};
         dom.removeEventListener(eventType, dom.__handlers[eventType]);
         dom.__handlers[eventType] = value;
         dom.addEventListener(eventType, dom.__handlers[eventType]);
     } else if (key == 'checked' || key == 'value' || key == 'className') {
-        dom[key] = value;
+        dom[key] = value; // todo 特殊属性的设置，包括 checked、value、className
     } else if(isRefAttr(key, value)) {
-        value(dom);
+        value(dom);  // <input ref={(ele) => {this.ref = ele}}/>
     } else if (isStyleAttr(key, value)) {
         Object.assign(dom.style, value);
     } else if (key == 'key') {
-        dom.__key = value;
+        dom.__key = value;  // 设置 key值，patch更新需要用到
     } else if (isPlainAttr(key, value)) {
         dom.setAttribute(key, value);
     }
@@ -171,11 +176,11 @@ class Component {
         return nextProps != this.props || nextState != this.state;
     }
 
-    componentWillMount() {}
+    componentWillMount() {}  // UNSAFE_componentWillMount()
   
     componentDidMount() {}
 
-    componentWillReceiveProps() {}
+    componentWillReceiveProps() {}  // UNSAFE_componentWillReceiveProps()
 
     componentWillUnmount() {}
 }

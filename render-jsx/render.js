@@ -57,7 +57,7 @@ const render = (vdom, parent = null) => {
 };
 
 
-/*** 自定义createElement，而不是React.createElement */
+/*** 自定义createElement，而不使用React.createElement */
 const createElement = (type, props, ...children) => {
     if (props === null)  props = {};
     return {type, props, children};

@@ -7,7 +7,6 @@ function Item(props) {
     onClick: props.onRemoveItem
   }, "X "));
 }
-
 class List extends Component {
   constructor(props) {
     super();
@@ -24,13 +23,11 @@ class List extends Component {
       }]
     };
   }
-
   handleItemRemove(index) {
     this.setState({
       list: this.state.list.filter((item, i) => i !== index)
     });
   }
-
   handleAdd() {
     this.setState({
       list: [...this.state.list, {
@@ -38,7 +35,6 @@ class List extends Component {
       }]
     });
   }
-
   render() {
     return createElement("div", null, createElement("ul", {
       className: "list"
@@ -58,9 +54,7 @@ class List extends Component {
       onClick: this.handleAdd.bind(this)
     }, "add")));
   }
-
 }
-
 render(createElement(List, {
   textColor: '#000'
 }), document.getElementById('root'));
