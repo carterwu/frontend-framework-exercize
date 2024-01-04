@@ -44,7 +44,7 @@ const render = (vdom, parent = null) => {
     } else if (isElementVdom(vdom)) {
         const dom = mount(document.createElement(vdom.type));
 
-        for (const child of vdom.children) {
+        for (const child of vdom.props.children) {
             render(child, dom); // 递归挂载所有的元素和文本
         }
         for (const prop in vdom.props) {
@@ -59,7 +59,38 @@ const render = (vdom, parent = null) => {
 
 /*** 自定义createElement，而不使用React.createElement */
 const createElement = (type, props, ...children) => {
-    if (props === null)  props = {};
-    return {type, props, children};
+    if (props === null) props = {};
+    return {
+        type,
+        props: {
+            ...props,
+            children,
+        }
+    };
 };
 
+// 为了使得数据结构更加一致，可以这么做。for our library we prefer simple code than performant code.
+// function createElement(type, props, ...children) {
+//     return {
+//         type,
+//         props: {
+//             ...props,
+//             children: children.map(child =>
+//                 typeof child === "object" ?
+//                 child :
+//                 createTextElement(child)
+//             ),
+//         },
+//     }
+// }
+
+
+// function createTextElement(text) {
+//     return {
+//         type: "TEXT_ELEMENT",
+//         props: {
+//             nodeValue: text,
+//             children: [],
+//         },
+//     }
+// }

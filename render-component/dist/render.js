@@ -8,7 +8,7 @@ const render = (vdom, parent = null) => {
     return mount(document.createTextNode(vdom));
   } else if (isElementVdom(vdom)) {
     const dom = mount(document.createElement(vdom.type));
-    for (const child of [].concat(...vdom.children)) {
+    for (const child of [].concat(...vdom.props.children)) {
       render(child, dom);
     }
     for (const prop in vdom.props) {
@@ -16,18 +16,16 @@ const render = (vdom, parent = null) => {
     }
     return dom;
   } else if (isComponentVdom(vdom)) {
-    const props = Object.assign({}, vdom.props, {
-      children: vdom.children
-    });
+    const functionProps = vdom.props;
     if (Component.isPrototypeOf(vdom.type)) {
-      const instance = new vdom.type(props);
+      const instance = new vdom.type(functionProps);
       instance.componentWillMount();
       const componentVdom = instance.render();
       instance.dom = render(componentVdom, parent);
       instance.componentDidMount();
       return instance.dom;
     } else {
-      const componentVdom = vdom.type(props);
+      const componentVdom = vdom.type(functionProps);
       return render(componentVdom, parent);
     }
   } else {
@@ -43,7 +41,7 @@ function isTextVdom(vdom) {
 function isElementVdom(vdom) {
   return typeof vdom === 'object' && typeof vdom.type === 'string';
 }
-/*** 判断是否为组件 */
+/*** 判断是否为组件；暂不支持函数 hooks */
 function isComponentVdom(vdom) {
   return typeof vdom.type == 'function';
 }
@@ -74,10 +72,14 @@ const createElement = (type, props, ...children) => {
   if (props === null) props = {};
   return {
     type,
-    props,
-    children
+    props: {
+      ...props,
+      children
+    }
   };
 };
+
+/* class 组件需要声明一个类，有 state 的属性 */
 class Component {
   constructor(props) {
     this.props = props || {};

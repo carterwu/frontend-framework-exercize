@@ -103,7 +103,7 @@ function commitWork(fiber) {
 
     let domParentFiber = fiber.return
     while (!domParentFiber.dom) {      // todo 为什么需要这个while？？to find the parent of a DOM node we’ll need to go up the fiber tree until we find a fiber with a DOM node.
-                                       // 函数组件 需要递归找到return父节点
+                                       // A:函数组件 需要递归找到return父节点
         domParentFiber = domParentFiber.return
     }
     const domParent = domParentFiber.dom

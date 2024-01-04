@@ -10,7 +10,7 @@ const render = (vdom, parent = null) => {
         return mount(document.createTextNode(vdom));
     } else if (isElementVdom(vdom)) {
         const dom = mount(document.createElement(vdom.type));
-        for (const child of [].concat(...vdom.children)) {
+        for (const child of [].concat(...vdom.props.children)) {
             render(child, dom);
         }
         for (const prop in vdom.props) {
@@ -18,10 +18,7 @@ const render = (vdom, parent = null) => {
         }
         return dom;
     } else if (isComponentVdom(vdom)) {
-        const functionProps = Object.assign({}, vdom.props, {
-            children: vdom.children  // 注意这里将children也合并入props中，传给组件参数
-        });
-
+        const functionProps = vdom.props;
         if (Component.isPrototypeOf(vdom.type)) {
             const instance = new vdom.type(functionProps);
             instance.componentWillMount();
@@ -80,8 +77,14 @@ const setAttribute = (dom, key, value) => {
 
 /*** 自定义createElement，而不使用React.createElement */
 const createElement = (type, props, ...children) => {
-    if (props === null)  props = {};
-    return {type, props, children};
+    if (props === null) props = {};
+    return {
+        type,
+        props: {
+            ...props,
+            children,
+        }
+    };
 };
 
 
