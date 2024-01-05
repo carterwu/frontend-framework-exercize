@@ -29,7 +29,6 @@ const isProperty = key =>
 const isFunctionComponent = element => typeof element.type === 'function'
 function render(element, container) {
   // add support for function components
-  console.log('??', element)
   if (isFunctionComponent(element)) {
     const functionVdom = element.type(element.props)
     render(functionVdom, container)
