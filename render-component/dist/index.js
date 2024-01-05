@@ -25,7 +25,7 @@ class List extends Component {
   render() {
     return createElement("ul", {
       className: "list"
-    }, this.state.list.map((item, index) => {
+    }, createElement("li", null, "i am"), this.state.list.map((item, index) => {
       return createElement(Item, {
         style: {
           background: item.color,

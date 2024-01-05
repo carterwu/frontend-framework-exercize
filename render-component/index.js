@@ -26,6 +26,7 @@ class List extends Component {
 
     render() {
         return <ul className="list">
+            <li>i am</li>
             {this.state.list.map((item, index) => {
                 return <Item style={{ background: item.color, color: this.state.textColor}} onClick={() => alert(item.text)}>{item.text}</Item>
             })}
