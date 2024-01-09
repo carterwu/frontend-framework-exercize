@@ -1,4 +1,8 @@
 
+// Function components are differents in two ways:
+
+// (1) 函数没有dom节点。the fiber from a function component doesn’t have a DOM node
+// （2） children获取是通过fn(props), 而不是直接来自props.children。and the children come from running the function instead of getting them directly from the props
 function createElement(type, props, ...children) {
   return {
     type,
